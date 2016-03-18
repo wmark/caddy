@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 
 	"github.com/mholt/caddy/caddy/https"
+	"github.com/mholt/caddy/caddy/notify"
 )
 
 // Restart restarts the entire application; gracefully with zero
@@ -30,6 +31,7 @@ import (
 // when `go run` sees the initial parent process exit.
 func Restart(newCaddyfile Input) error {
 	log.Println("[INFO] Restarting")
+	go notify.IsReloading(true).WithStatus("Restarting").Tell()
 
 	if newCaddyfile == nil {
 		caddyfileMu.Lock()
