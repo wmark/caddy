@@ -1,0 +1,25 @@
+[Unit]
+Description=update CADDY
+ConditionArchitecture=x86-64
+ConditionACPower=true
+After=network-online.target
+Requisite=network-online.target
+
+[Service]
+Type=oneshot
+
+; don't fail on timeouts
+SuccessExitStatus=28
+
+ExecStart=/bin/sh -c " \
+  curl --fail --silent --show-error --location \
+    --header 'Accept: application/x-gzip' \
+    --time-cond /usr/sbin/caddy \
+    $(curl -fsSL --header 'Accept: application/json' \
+        https://api.github.com/repos/mholt/caddy/releases/latest \
+      | jq -r '.assets[] | select(.name == \"caddy_linux_amd64.tar.gz\") | .browser_download_url') \
+  | tar --no-same-owner --keep-newer-files --touch -C /usr/sbin/ -zx 'caddy' \
+  && chmod a+x /usr/sbin/caddy; \
+  test -s /usr/sbin/caddy"
+
+; Then utilize a [Path] unit's PathModified= to trigger unattended restarts of Caddy.
