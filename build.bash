@@ -24,7 +24,7 @@ ldflags=()
 
 # Timestamp of build
 name="${pkg}.buildDate"
-value=$(date -u +"%a %b %d %H:%M:%S %Z %Y")
+value="$(date --utc +"%F %H:%M:%SZ")"
 ldflags+=("-X" "\"${name}=${value}\"")
 
 # Current tag, if HEAD is on a tag
