@@ -2,6 +2,7 @@ package server
 
 import (
 	"crypto/tls"
+	"math/big"
 	"net"
 
 	"github.com/mholt/caddy/middleware"
@@ -80,4 +81,7 @@ type TLSConfig struct {
 
 	// ReorderCipherSuites allows to reorder the list of the initially configured cipher suites.
 	ReorderCipherSuites func(clientHello *tls.ClientHelloInfo, ours []uint16) []uint16
+
+	// Parameters for Diffie-Hellman. |q| can be nil.
+	DHPrime, DHGenerator, DHSubgroup *big.Int
 }
