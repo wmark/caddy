@@ -34,6 +34,9 @@ func setDefaultTLSParams(c *server.Config) {
 	// Prefer server cipher suites
 	c.TLS.PreferServerCipherSuites = true
 
+	// PreferServerCipherSuites enables the cipher reordering option.
+	c.TLS.ReorderCipherSuites = PreferChaChaIfFirst
+
 	// Default TLS port is 443; only use if port is not manually specified,
 	// TLS is enabled, and the host is not localhost
 	if c.Port == "" && c.TLS.Enabled && (!c.TLS.Manual || c.TLS.OnDemand) && c.Host != "localhost" {
@@ -127,4 +130,37 @@ var defaultCiphers = []uint16{
 	tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
 	tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
 	tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+}
+
+// isChaCha returns true if the cipher suite uses Salsa/ChaCha20 as cipher.
+func isChaCha(suiteID uint16) bool {
+	switch suiteID {
+	case 0xcc13, 0xcc14, 0xcca8, 0xcca9, 0xccac:
+		return true
+	default:
+		return false
+	}
+}
+
+// PreferChaChaIfFirst moves Salsa/ChaCha20 cipher suites to the front.
+func PreferChaChaIfFirst(clientHello *tls.ClientHelloInfo, ours []uint16) []uint16 {
+	if !isChaCha(clientHello.CipherSuites[0]) {
+		return nil
+	}
+
+	reordered := make([]uint16, 0, len(ours))
+	// first pass: preferred ciphers
+	for _, suiteID := range ours {
+		if isChaCha(suiteID) {
+			reordered = append(reordered, suiteID)
+		}
+	}
+	// second pass: all remaining
+	for _, suiteID := range ours {
+		if !isChaCha(suiteID) {
+			reordered = append(reordered, suiteID)
+		}
+	}
+
+	return reordered
 }

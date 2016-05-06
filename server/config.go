@@ -77,4 +77,7 @@ type TLSConfig struct {
 	PreferServerCipherSuites bool
 	ClientCerts              []string
 	ClientAuth               tls.ClientAuthType
+
+	// ReorderCipherSuites allows to reorder the list of the initially configured cipher suites.
+	ReorderCipherSuites func(clientHello *tls.ClientHelloInfo, ours []uint16) []uint16
 }
