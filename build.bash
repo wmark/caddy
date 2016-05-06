@@ -54,4 +54,8 @@ name="${pkg}.gitFilesModified"
 value="$(git -C "${git_repo}" diff-index --name-only HEAD)"
 ldflags+=("-X" "\"${name}=${value}\"")
 
-go build -ldflags "${ldflags[*]}" -o "${output_filename}"
+set -x
+go build \
+  -tags "alttls" \
+  -ldflags "${ldflags[*]}" \
+  -o "${output_filename}"
