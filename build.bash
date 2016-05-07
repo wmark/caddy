@@ -20,7 +20,7 @@ set -euo pipefail
 : ${git_repo:="."}
 
 pkg=main
-ldflags=()
+ldflags=("-w" "-s")
 
 # Timestamp of build
 name="${pkg}.buildDate"
