@@ -135,4 +135,4 @@ func (h ErrorHandler) recovery(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-const timeFormat = "02/Jan/2006:15:04:05 -0700"
+const timeFormat = `2006-01-02 15:04:05-0700`

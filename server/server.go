@@ -218,6 +218,10 @@ func serveTLS(s *Server, ln net.Listener, tlsConfigs []TLSConfig) error {
 	s.TLSConfig.CipherSuites = tlsConfigs[0].Ciphers
 	s.TLSConfig.PreferServerCipherSuites = tlsConfigs[0].PreferServerCipherSuites
 
+	s.TLSConfig.ReorderCipherSuites = tlsConfigs[0].ReorderCipherSuites
+	s.TLSConfig.SetDiffieHellmanParams(
+		tlsConfigs[0].DHPrime, tlsConfigs[0].DHGenerator, tlsConfigs[0].DHSubgroup) // panics on bad values
+
 	// TLS client authentication, if user enabled it
 	err := setupClientAuth(tlsConfigs, s.TLSConfig)
 	if err != nil {

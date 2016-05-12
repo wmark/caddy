@@ -1,0 +1,12 @@
+; systemctl start update-caddy.timer
+
+[Unit]
+Description=Updates a core executable
+
+[Timer]
+; You will want to adjust these:
+OnBootSec=10min
+OnUnitActiveSec=1w
+
+[Install]
+WantedBy=timers.target

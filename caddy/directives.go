@@ -5,6 +5,11 @@ import (
 	"github.com/mholt/caddy/caddy/parse"
 	"github.com/mholt/caddy/caddy/setup"
 	"github.com/mholt/caddy/middleware"
+
+	"blitznote.com/src/caddy.upload"
+	cors "github.com/captncraig/cors/caddy"
+	prometheus "github.com/miekg/caddy-prometheus"
+	"github.com/pschlump/caddy-jsonp"
 )
 
 func init() {
@@ -57,9 +62,12 @@ var directiveOrder = []directive{
 	{"header", setup.Headers},
 	{"rewrite", setup.Rewrite},
 	{"redir", setup.Redir},
+	{"cors", cors.Setup},
 	{"ext", setup.Ext},
 	{"mime", setup.Mime},
 	{"basicauth", setup.BasicAuth},
+	{"jsonp", jsonp.Setup},
+	{"upload", upload.Setup},
 	{"internal", setup.Internal},
 	{"pprof", setup.PProf},
 	{"expvar", setup.ExpVar},
@@ -69,6 +77,7 @@ var directiveOrder = []directive{
 	{"markdown", setup.Markdown},
 	{"templates", setup.Templates},
 	{"browse", setup.Browse},
+	{"prometheus", prometheus.Setup},
 }
 
 // Directives returns the list of directives in order of priority.
