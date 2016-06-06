@@ -1,0 +1,39 @@
+stages:
+- build
+
+variables:
+  BUILD_SOURCE: "https://hub.blitznote.com/mark/caddy/builds"
+
+cache:
+  group: go-blitznote-shared
+  paths:
+  - _vendor-cache/
+
+before_script:
+- mkdir -p _vendor-cache /var/go/ours
+- ln -s "$(pwd -P)/_vendor-cache" /var/go/theirs
+- export GOPATH=/var/go/theirs:/var/go/ours
+- export GODIR=/var/go/ours/src/github.com/mholt/caddy
+- mkdir -p "$(dirname "$GODIR")"
+- ln -sfv "$(pwd -P)" "$GODIR"
+- cd "$GODIR"
+- go get -d
+- tree /var/go -d -L 4 || true
+- mv /var/go/theirs/src/blitznote.com /var/go/ours/src/
+
+build_binary:
+  stage: build
+  only:
+  - next
+  script:
+  - cp -a build.bash build2.bash
+  - sed -i -e '/# List of modified/,/ldflags+=/d' build2.bash
+  - sed -i -e '/Served with/c\ \t\t\tServed with <a rel="noopener noreferrer" href="https://github.com/wmark/caddy">Mark&apos;s fork of Caddy</a>.' caddy/setup/browse.go
+  - ./build2.bash ecaddy~$(dpkg --print-architecture)
+  - ./ecaddy~$(dpkg --print-architecture) -version
+  - tar --label "${BUILD_SOURCE}" --owner=root --group=root -cf ecaddy-${CI_BUILD_REF_NAME}.tar ecaddy~$(dpkg --print-architecture)
+  - plzip ecaddy-${CI_BUILD_REF_NAME}.tar
+  - rm ecaddy~$(dpkg --print-architecture)
+  artifacts:
+    paths:
+    - ecaddy*
