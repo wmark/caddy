@@ -18,8 +18,10 @@ before_script:
 - ln -sfv "$(pwd -P)" "$GODIR"
 - cd "$GODIR"
 - go get -d
-- tree /var/go -d -L 4 || true
 - mv /var/go/theirs/src/blitznote.com /var/go/ours/src/
+- tree /var/go -d -l -L 5 || true
+- find /var/go/ours/src -mindepth 3 -maxdepth 3 -type d -exec bash -c "cd {}; git log -n 1 --date=relative --pretty=format:'%h - %s (%cr)'" \;
+- find /var/go/theirs/src -mindepth 3 -maxdepth 3 -type d -exec bash -c "cd {}; git log -n 1 --date=relative --pretty=format:'%h - %s (%cr)'" \;
 
 build_binary:
   stage: build
