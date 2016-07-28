@@ -56,7 +56,7 @@ func TestSetupParseBasic(t *testing.T) {
 	}
 
 	// KeyType default
-	if KeyType != acme.RSA2048 {
+	if KeyType != acme.EC256 {
 		t.Errorf("Expected '2048' as KeyType, got %#v", KeyType)
 	}
 
