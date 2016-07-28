@@ -17,6 +17,7 @@ cache:
   - ln -s "$(pwd -P)/_vendor-cache" /var/go/theirs
   - export GOPATH=/var/go/theirs:/var/go/ours
 
+  - grep -q -F "443/tcp" /etc/services || printf "https\t\t443/tcp\n" >>/etc/services
   - export CADDYDIR=/var/go/ours/src/github.com/mholt/caddy
   - mkdir -p "$(dirname "$CADDYDIR")"
   - ln -sfv "$(pwd -P)" "$CADDYDIR"
