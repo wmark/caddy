@@ -46,6 +46,7 @@ unittests:
   stage: test
   <<: *get_dependencies
   script:
+  - rm -r dist
   - go test -v ./...
 
 build_binary:
