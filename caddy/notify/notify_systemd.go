@@ -105,10 +105,10 @@ func (p *SystemdNotifier) Tell() {
 	p.pendingLock.Lock()
 	defer p.pendingLock.Unlock()
 
-	err := daemon.SdNotify(strings.Join(p.pendingLines, "\n"))
+	sent, err := daemon.SdNotify(strings.Join(p.pendingLines, "\n"))
 	p.pendingLines = []string{}
 
-	if err == daemon.SdNotifyNoSocket {
+	if !sent && err == nil {
 		p.haveSystemd = false
 	}
 }
